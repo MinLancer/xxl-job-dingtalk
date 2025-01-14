@@ -2,6 +2,7 @@ package com.xxl.job.admin.controller;
 
 import com.xxl.job.admin.controller.annotation.PermissionLimit;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
+import com.xxl.job.admin.service.XxlJobService;
 import com.xxl.job.core.biz.AdminBiz;
 import com.xxl.job.core.biz.model.HandleCallbackParam;
 import com.xxl.job.core.biz.model.RegistryParam;
@@ -27,6 +28,9 @@ public class JobApiController {
 
     @Resource
     private AdminBiz adminBiz;
+
+    @Resource
+    private XxlJobService xxlJobService;
 
     /**
      * api
@@ -63,6 +67,12 @@ public class JobApiController {
         } else if ("registryRemove".equals(uri)) {
             RegistryParam registryParam = GsonTool.fromJson(data, RegistryParam.class);
             return adminBiz.registryRemove(registryParam);
+        } else if ("jobStart".equals(uri)) {
+            String jobId = request.getParameter("jobId");
+            return xxlJobService.start(Integer.parseInt(jobId));
+        }else if ("jobStop".equals(uri)) {
+            String jobId = request.getParameter("jobId");
+            return xxlJobService.stop(Integer.parseInt(jobId));
         } else {
             return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, uri-mapping("+ uri +") not found.");
         }
