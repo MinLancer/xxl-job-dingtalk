@@ -1,4 +1,4 @@
-FROM openjdk:8-jre-slim
+FROM register.dpmall.com/java/java8:1.8.0_202
 MAINTAINER xuxueli
 
 ENV PARAMS=""
