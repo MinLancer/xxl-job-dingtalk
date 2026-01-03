@@ -4,7 +4,7 @@ import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiRobotSendRequest;
 import com.taobao.api.ApiException;
-import org.apache.tomcat.util.codec.binary.Base64;
+import java.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -148,11 +148,9 @@ public class DingtalkRobotUtils {
             Mac mac = Mac.getInstance(HMAC_SHA256);
             mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), HMAC_SHA256));
             byte[] signData = mac.doFinal(stringToSign.getBytes(StandardCharsets.UTF_8));
-            sign = URLEncoder.encode(new String(Base64.encodeBase64(signData)),StandardCharsets.UTF_8.name());
+            sign = URLEncoder.encode(Base64.getEncoder().encodeToString(signData), StandardCharsets.UTF_8);
         } catch (NoSuchAlgorithmException e) {
             logger.error("sign Mac.getInstance", e);
-        } catch (UnsupportedEncodingException e) {
-            logger.error("sign", e);
         } catch (InvalidKeyException e) {
             logger.error("sign mac.init", e);
         }
