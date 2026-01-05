@@ -1,11 +1,14 @@
 package com.xxl.job.admin.scheduler.openapi;
 
+import com.xxl.job.admin.constant.Consts;
 import com.xxl.job.admin.scheduler.config.XxlJobAdminBootstrap;
+import com.xxl.job.admin.service.XxlJobService;
 import com.xxl.job.core.constant.Const;
 import com.xxl.job.core.openapi.AdminBiz;
 import com.xxl.job.core.openapi.model.CallbackRequest;
 import com.xxl.job.core.openapi.model.RegistryRequest;
 import com.xxl.sso.core.annotation.XxlSso;
+import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.json.GsonTool;
 import com.xxl.tool.response.Response;
@@ -14,6 +17,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,6 +29,9 @@ public class OpenApiController {
 
     @Resource
     private AdminBiz adminBiz;
+
+    @Resource
+    private XxlJobService xxlJobService;
 
     /**
      * api
@@ -67,6 +75,22 @@ public class OpenApiController {
                 case "registryRemove": {
                     RegistryRequest registryParam = GsonTool.fromJson(requestBody, RegistryRequest.class);
                     return adminBiz.registryRemove(registryParam);
+                    }
+                case "jobStart": {
+                    String jobId = request.getParameter("jobId");
+                    LoginInfo adminLoginInfo = new LoginInfo();
+                    adminLoginInfo.setUserId("1");
+                    adminLoginInfo.setUserName("admin");
+                    adminLoginInfo.setRoleList(List.of(Consts.ADMIN_ROLE));
+                    return xxlJobService.start(Integer.parseInt(jobId), adminLoginInfo);
+                    }
+                case "jobStop": {
+                    String jobId = request.getParameter("jobId");
+                    LoginInfo adminLoginInfo = new LoginInfo();
+                    adminLoginInfo.setUserId("1");
+                    adminLoginInfo.setUserName("admin");
+                    adminLoginInfo.setRoleList(List.of(Consts.ADMIN_ROLE));
+                    return xxlJobService.stop(Integer.parseInt(jobId), adminLoginInfo);
                     }
                 default:
                     return Response.ofFail("invalid request, uri-mapping("+ uri +") not found.");
